@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="message" placeholder="Type your message here...">
+    <button id="send-btn">Send</button>
+
+    <script>
+        $(document).ready(function(){
+            var socket = io();
+            var username = "{{ username }}";
+            var room = "chatroom";
+            
+            socket.emit('join', {'username': username, 'room': room});
+
+            $('#send-btn').click(function(){
+                var message = $('#message').val();
+                socket.emit('message', {'username': username, 'text': message, 'room': room});
+                $('#message').val('');
+            });
+
+            socket.on('message', function(data){
+                $('#chat-box').append('<div><strong>' + data.username + ':</strong> ' + data.text + '</div>');
+            });
+        });
+    </script>
+</body>
+</html>
